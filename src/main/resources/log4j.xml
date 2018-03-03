@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE log4j:configuration SYSTEM "log4j.dtd">
+<log4j:configuration>
+
+    <appender name="SlackAppender" class="se.voipbusiness.log4j.SlackAppender">
+        <param name="iconMsg" value=":warning:"/>
+        <param name="chan" value="#bot-system"/>
+        <param name="user" value="rafael"/>
+        <param name="icon" value=":warning:"/>
+
+        <layout class="se.voipbusiness.log4j.SlackLogLayout">
+        </layout>
+    </appender>
+
+    <root>
+        <level value="DEBUG" />
+        <appender-ref ref="SlackAppender" />
+    </root>
+
+</log4j:configuration>
