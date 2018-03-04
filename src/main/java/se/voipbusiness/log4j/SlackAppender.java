@@ -9,6 +9,7 @@ import java.net.URL;
 
 public class SlackAppender extends AppenderSkeleton {
 
+    /* OKHttp3Client library take care of create a Thread for each Http Req. */
     private OkHttp3Client httpClient = new OkHttp3Client();
 
     String msgIcon = ":warning:";
@@ -16,6 +17,7 @@ public class SlackAppender extends AppenderSkeleton {
     String chan = "";
     String user = "Test-User";
     String icon = "earth_americas:";
+    String webhookURL = "Your Webhook URL";
 
     public String getMsgIcon() {
         return msgIcon;
@@ -57,6 +59,10 @@ public class SlackAppender extends AppenderSkeleton {
         this.icon = icon;
     }
 
+    public void setWebhookURL(String webhookURL) {
+        this.webhookURL = webhookURL;
+    }
+
     @Override
     public void close() {
 
@@ -79,7 +85,7 @@ public class SlackAppender extends AppenderSkeleton {
 
         URL url = null;
         try {
-            url = new URL("https://hooks.slack.com/services/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");
+            url = new URL(webhookURL);
         } catch (MalformedURLException e) {
             e.printStackTrace();
         }

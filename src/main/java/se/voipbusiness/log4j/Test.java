@@ -6,8 +6,18 @@ public class Test {
 
     static Logger logger = Logger.getLogger(Test.class);
 
+    public String stackTraceToString(Throwable e) {
+        StringBuilder sb = new StringBuilder();
+        for (StackTraceElement element : e.getStackTrace()) {
+            sb.append(element.toString());
+            sb.append("\n");
+        }
+        return sb.toString();
+    }
+
     public static void main(String[] args) {
 
+        Test t = new Test();
         String msg = "Hola Cabron";
 
         logger.info(msg);
@@ -16,7 +26,7 @@ public class Test {
             float a = 10/0;
         }
         catch (Exception e){
-            logger.error(e.toString());
+            logger.error(e.getMessage() + " \n" +   t.stackTraceToString(e));
         }
 
     }

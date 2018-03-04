@@ -2,11 +2,20 @@
 <!DOCTYPE log4j:configuration SYSTEM "log4j.dtd">
 <log4j:configuration>
 
+    <!--
+    curl -X POST -d '{"text": ":warning:  Invoice has thrown an Exception", "channel": "#bot-system",
+    "username": "rafael", "icon_emoji": ":warning:"}' -H "Content-Type: application/json"
+    https://hooks.slack.com/services/XXXXXXXXXXXXXXXXXXX/XXXXXXXXXXXXX
+    -->
+
     <appender name="SlackAppender" class="se.voipbusiness.log4j.SlackAppender">
+
         <param name="iconMsg" value=":warning:"/>
         <param name="chan" value="#bot-system"/>
         <param name="user" value="rafael"/>
         <param name="icon" value=":warning:"/>
+
+        <param name="webhookURL" value="https://hooks.slack.com/services/XXXXXXXXXXXXXXXXXXX/XXXXXXXXXXXXX"/>
 
         <layout class="se.voipbusiness.log4j.SlackLogLayout">
         </layout>

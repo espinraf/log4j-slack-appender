@@ -1,7 +1,11 @@
 apply plugin: 'java'
+apply plugin: 'maven'
 
+version = "1.0"
 targetCompatibility = "1.8"
 sourceCompatibility = "1.8"
+
+def gitpath = "github.com/${githubUser}/${archivesBaseName}.git"
 
 repositories {
     mavenLocal()
@@ -9,9 +13,82 @@ repositories {
 }
 
 
+configurations {
+	archives
+	provided {
+		dependencies.all { dep ->
+			configurations.default.exclude group: dep.group, module: dep.name
+		}
+	}
+	compile.extendsFrom provided
+}
+
+task sourcesJar(type: Jar, dependsOn: classes) {
+    classifier = 'sources'
+    from sourceSets.main.allSource
+}
+
+task javadocJar(type: Jar, dependsOn: javadoc) {
+    classifier = 'javadoc'
+    from javadoc.destinationDir
+    if (JavaVersion.current().isJava8Compatible()) {
+        tasks.withType(Javadoc) {
+            options.addStringOption('Xdoclint:none', '-quiet')
+        }
+    }
+}
+
+artifacts {
+    archives sourcesJar
+    archives javadocJar
+}
+
 dependencies {
-    compile 'com.squareup.okhttp:okhttp:2.5.0'
-    compile 'com.squareup.okhttp3:okhttp:3.5.0'
+    provided 'com.squareup.okhttp:okhttp:2.5.0'
+    provided 'com.squareup.okhttp3:okhttp:3.5.0'
     compile 'com.google.code.gson:gson:2.3.1'
-    compile 'log4j:log4j:1.2.17'
+    provided 'log4j:log4j:1.2.17'
+}
+
+
+uploadArchives {
+    repositories {
+        mavenDeployer {
+            pom.artifactId = project.name
+            configuration = configurations.archives
+
+            repository(url: "http://localhost:8081/repository/releases/") {
+                authentication(userName: 'admin', password: 'admin')
+            }
+            pom.project {
+                url 'http://${gitpath}'
+                inceptionYear '2017'
+                name archivesBaseName
+                description project.description
+
+                scm {
+                    url "scm:git:https://${gitpath}"
+                    connection "scm:git:ssh://git@${gitpath}"
+                }
+
+                licenses {
+                    license {
+                        name 'MIT'
+                        comments new File(rootDir, 'LICENSE').getText()
+                        url 'https://opensource.org/licenses/MIT'
+                        distribution 'repo'
+                    }
+                }
+                developers {
+                    developer {
+                        id 'espinraf'
+                        name 'Rafael Espino'
+                        email 'rafael.espino@gmail.com'
+                    }
+                }
+            }
+            pom.packaging = 'jar'
+            //beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
+        }
+    }
 }
